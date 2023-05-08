@@ -1,16 +1,16 @@
-package tranzactii;
+package model.tranzactii;
 
 
-public class Oferte {
+public class Oferta {
     protected int  pret, cumparatorID, vanzatorID, obiectID;
 
-    public Oferte() {
+    public Oferta() {
         this.pret = 0;
         this.cumparatorID = 0;
         this.vanzatorID = 0;
         this.obiectID = 0;
     }
-    public Oferte( int pret, int cumparatorID, int vanzatorID, int obiectID) {
+    public Oferta   ( int pret, int cumparatorID, int vanzatorID, int obiectID) {
         this.pret = pret;
         this.cumparatorID = cumparatorID;
         this.vanzatorID = vanzatorID;

@@ -1,6 +1,6 @@
-package produse;
+package model.produse;
 
-public class Celebritate extends Obiecte{
+public class Celebritate extends Obiect{
     protected String vedeta;
 
     public Celebritate() {
@@ -11,6 +11,16 @@ public class Celebritate extends Obiecte{
     public Celebritate(String nume, int estimare, int proprietarID, String vedeta) {
         super(nume, estimare, proprietarID);
         this.vedeta = vedeta;
+    }
+
+    @Override
+    public String toString() {
+        return "Celebritate :" +
+                " " + nume +
+                " lui " + vedeta  +
+                ", estimare :" + estimare +
+                ", ObiectID=" + ID +
+                ';';
     }
 
     public String getVedeta() {

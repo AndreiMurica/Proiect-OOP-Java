@@ -1,6 +1,6 @@
-package produse;
+package model.produse;
 
-public class Antichitate extends Obiecte {
+public class Antichitate extends Obiect {
     protected int an;
     protected String zona;
 
@@ -16,6 +16,16 @@ public class Antichitate extends Obiecte {
         this.zona = zona;
     }
 
+    @Override
+    public String toString() {
+        return "Antichitate :" +
+                "Artefactul " + nume  +
+                " din zona '" + zona +
+                " perioada an " + an +
+                ", estimare :" + estimare +
+                ", ObiectID :" + ID +
+                ';';
+    }
     public int getAn() {
         return an;
     }

@@ -1,4 +1,4 @@
-package utilizatori;
+package model.utilizatori;
 
 public class Vanzator extends Persoana{
 

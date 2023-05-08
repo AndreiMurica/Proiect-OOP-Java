@@ -1,6 +1,6 @@
-package produse;
+package model.produse;
 
-public class Arta extends Obiecte{
+public class Arta extends Obiect{
     protected String autor;
     protected int an;
 
@@ -16,6 +16,16 @@ public class Arta extends Obiecte{
         this.an = an;
     }
 
+    @Override
+    public String toString() {
+        return "Arta:" +
+                " Opera " + nume  +
+                " facuta de " + autor +
+                " in anul" + an +
+                ", estimare : " + estimare +
+                ", ObiectID :" + ID +
+                ';';
+    }
     public String getAutor() {
         return autor;
     }
