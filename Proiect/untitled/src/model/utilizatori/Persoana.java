@@ -49,5 +49,8 @@ public class Persoana {
         return ID;
     }
 
+    public void setBalanta(int balanta) {
+        this.balanta = balanta;
+    }
 
 }

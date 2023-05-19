@@ -17,6 +17,9 @@ public class Main {
         service.AdaugareCelebritate(4, "Chitara", 300, "Elvis Presley");
         service.AfisareAvere(1);
         service.StergedinColectie(1, 1);
+        service.AfisareAvere(1);
+        service.CreareOferta(2, 5, 300);
+        service.AfisareOferte();
         service.AfisareVanzatori();
         service.AfisareCumparatori();
     }
