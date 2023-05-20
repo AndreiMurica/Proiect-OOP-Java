@@ -3,16 +3,19 @@ package service;
 import model.produse.Antichitate;
 import model.produse.Arta;
 import model.produse.Celebritate;
+import model.produse.Obiect;
 import model.tranzactii.Oferta;
 import model.utilizatori.Cumparator;
 import model.utilizatori.Vanzator;
 
+import java.util.Hashtable;
 import java.util.ArrayList;
 import java.util.List;
 public class AuctionService {
     private List<Cumparator> cumparatori = new ArrayList<>();
     private List<Vanzator> vanzatori = new ArrayList<>();
     private List<Oferta> oferte = new ArrayList<>();
+    private Hashtable<Integer, Oferta> bestOffert = new Hashtable<>();
     public void AdaugaVanzator (String nume, int varsta, int balanta){
         Vanzator vanzator = new Vanzator(nume, varsta, balanta);
         vanzatori.add(vanzator);
@@ -124,23 +127,26 @@ public class AuctionService {
                 if (vanzator.getObiecte().get(i).getID() == ProdusID) {
                     Oferta oferta = new Oferta(suma, CumparatorID, vanzator.getID(), ProdusID);
                     oferte.add(oferta);
+                    UpdatebestOffert(oferta);
                 }
             }
         }
     }
 
-    public void AcceptareOferta(int OfertaId) {
-        int VanzatorID, CumparatorID, ProdusID, suma;
+    public void AcceptareOferta(int ProdusID, int CumparatorID) {
+        int VanzatorID,  suma;
+        String nume = "";
         for (Oferta oferta : oferte) {
-            if (oferta.getObiectID() == OfertaId) {
+            if (oferta.getObiectID()== ProdusID && oferta.getCumparatorID() == CumparatorID) {
                 VanzatorID = oferta.getVanzatorID();
-                CumparatorID = oferta.getCumparatorID();
-                ProdusID = oferta.getObiectID();
                 suma = oferta.getPret();
+                Obiect produs = null;
                 for (Vanzator vanzator : vanzatori) {
                     if (vanzator.getID() == VanzatorID) {
                         for (int i = 0; i < vanzator.getObiecte().size(); i++) {
                             if (vanzator.getObiecte().get(i).getID() == ProdusID) {
+                                produs = vanzator.getObiecte().get(i);
+                                nume = vanzator.getObiecte().get(i).getNume();
                                 vanzator.StergeObiect(vanzator.getObiecte().get(i));
                                 vanzator.setBalanta(vanzator.getBalanta() + suma);
                             }
@@ -149,14 +155,20 @@ public class AuctionService {
                 }
                 for (Cumparator cumparator : cumparatori) {
                     if (cumparator.getID() == CumparatorID) {
-                        for (int i = 0; i < cumparator.getObiecte().size(); i++) {
-                            if (cumparator.getObiecte().get(i).getID() == ProdusID) {
-                                cumparator.StergeObiect(cumparator.getObiecte().get(i));
-                                cumparator.setBalanta(cumparator.getBalanta() - suma);
-                            }
+                        cumparator.setBalanta(cumparator.getBalanta() - suma);
+                        if (produs instanceof Arta) {
+                            AdaugareArta(cumparator.getID(), nume, produs.getEstimare(), ((Arta) produs).getAn(), ((Arta) produs).getAutor());
+                        }
+                        if (produs instanceof Antichitate) {
+                            AdaugareAntichitate(cumparator.getID(), nume, produs.getEstimare(), ((Antichitate) produs).getAn(), ((Antichitate) produs).getZona());
+                        }
+                        if (produs instanceof Celebritate) {
+                            AdaugareCelebritate(cumparator.getID(), nume, produs.getEstimare(), ((Celebritate) produs).getVedeta());
                         }
                     }
                 }
+                bestOffert.remove(ProdusID);
+                StergereOferta(nume); //stergem toate ofertele pentru produsul vandut
             }
         }
     }
@@ -206,6 +218,7 @@ public class AuctionService {
     }
 
     public void AfisareColectie(int ID){
+        System.out.println("Colectia utilizatorului cu ID-ul " + ID + " este: ");
         for (Vanzator vanzator : vanzatori) {
             if (vanzator.getID() == ID){
                 for (int i = 0; i < vanzator.getObiecte().size(); i++) {
@@ -222,4 +235,50 @@ public class AuctionService {
         }
     }
 
+    public void ModificareOferta(int ObiectID, int CumparatorID, int suma){
+        for (Oferta oferta : oferte) {
+            if (oferta.getObiectID() == ObiectID && oferta.getCumparatorID() == CumparatorID) {
+                oferta.setPret(suma);
+                UpdatebestOffert(oferta);
+            }
+        }
+    }
+
+    public void StergereOferta(int OfertaID) {
+        for (Oferta oferta : oferte) {
+            if (oferta.getObiectID() == OfertaID) {
+                oferte.remove(oferta);
+            }
+        }
+    }
+
+    public void StergereOferta(String NumeProdus) {
+        for (Oferta oferta : oferte) {
+            for (Vanzator vanzator : vanzatori) {
+                if (vanzator.getID() == oferta.getVanzatorID()) {
+                    for (int i = 0; i < vanzator.getObiecte().size(); i++) {
+                        if (vanzator.getObiecte().get(i).getNume() == NumeProdus) {
+                            oferte.remove(oferta);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    public void UpdatebestOffert(Oferta oferta) {
+        if (bestOffert.containsKey(oferta.getObiectID())) {
+            if (bestOffert.get(oferta.getObiectID()).getPret() < oferta.getPret()) {
+                bestOffert.replace(oferta.getObiectID(), oferta);
+            }
+        } else {
+            bestOffert.put(oferta.getObiectID(), oferta);
+        }
+    }
+
+    public void CeaMaiBunaOferta() {
+        for (int i : bestOffert.keySet()) {
+            System.out.println("Cea mai buna oferta pentru produsul " + i + " este " + bestOffert.get(i).getPret() + " de la cumparatorul " + bestOffert.get(i).getCumparatorID());
+        }
+    }
 }

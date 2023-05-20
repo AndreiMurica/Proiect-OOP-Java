@@ -42,5 +42,9 @@ public class Oferta {
         return obiectID;
     }
 
+    public void setPret(int pret) {
+        this.pret = pret;
+    }
+
 }
 

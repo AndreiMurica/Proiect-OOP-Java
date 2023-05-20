@@ -22,5 +22,14 @@ public class Main {
         service.AfisareOferte();
         service.AfisareVanzatori();
         service.AfisareCumparatori();
+        service.CreareOferta(3, 4, 250);
+        service.AfisareOferte(3);
+        service.CreareOferta(3, 5, 350);
+        service.ModificareOferta(3, 4, 400);
+        //service.AcceptareOferta(3, 4);
+        service.AfisareColectie(4);
+        service.AfisareAvere(1);
+        service.AfisareOferte();
+        service.CeaMaiBunaOferta();
     }
 }
