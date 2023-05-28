@@ -16,6 +16,12 @@ public class Arta extends Obiect{
         this.an = an;
     }
 
+    public Arta(int ID, String nume, int estimare, int proprietarID, String autor, int an) {
+        super(ID, nume, estimare, proprietarID);
+        this.autor = autor;
+        this.an = an;
+    }
+
     @Override
     public String toString() {
         return "Arta:" +

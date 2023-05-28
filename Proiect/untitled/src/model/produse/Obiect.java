@@ -21,6 +21,12 @@ public class Obiect {
         this.ID = nrObiecte;
     }
 
+    public Obiect(int ID, String nume, int estimare, int proprietarID) {
+        this.nume = nume;
+        this.estimare = estimare;
+        this.proprietarID = proprietarID;
+        this.ID = ID;
+    }
     public String getNume() {
         return nume;
     }

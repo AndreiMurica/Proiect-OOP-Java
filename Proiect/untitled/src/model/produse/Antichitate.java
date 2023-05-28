@@ -16,6 +16,12 @@ public class Antichitate extends Obiect {
         this.zona = zona;
     }
 
+    public Antichitate(int ID, String nume, int estimare, int proprietarID, int an, String zona) {
+        super(ID, nume, estimare, proprietarID);
+        this.an = an;
+        this.zona = zona;
+    }
+
     @Override
     public String toString() {
         return "Antichitate :" +

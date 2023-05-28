@@ -22,6 +22,14 @@ public class Persoana {
         nrPersoane++;
         this.ID = nrPersoane;
     }
+
+    public Persoana(int ID, String nume, int varsta, int balanta) {
+        this.nume = nume;
+        this.varsta = varsta;
+        this.balanta = balanta;
+        this.obiecte = new ArrayList<>();
+        this.ID = ID;
+    }
     public void adaugaObiect(Obiect obiect){
         this.obiecte.add(obiect);
     }

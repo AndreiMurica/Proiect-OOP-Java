@@ -13,6 +13,10 @@ public class Celebritate extends Obiect{
         this.vedeta = vedeta;
     }
 
+    public Celebritate(int ID, String nume, int estimare, int proprietarID, String vedeta) {
+        super(ID, nume, estimare, proprietarID);
+        this.vedeta = vedeta;
+    }
     @Override
     public String toString() {
         return "Celebritate :" +
