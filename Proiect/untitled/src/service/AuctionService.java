@@ -1,21 +1,21 @@
-package service;
+        package service;
 
-import audit.Audit;
-import model.produse.Antichitate;
-import model.produse.Arta;
-import model.produse.Celebritate;
-import model.produse.Obiect;
-import model.tranzactii.Oferta;
-import model.utilizatori.Cumparator;
-import model.utilizatori.Vanzator;
+        import audit.Audit;
+        import model.produse.Antichitate;
+        import model.produse.Arta;
+        import model.produse.Celebritate;
+        import model.produse.Obiect;
+        import model.tranzactii.Oferta;
+        import model.utilizatori.Cumparator;
+        import model.utilizatori.Vanzator;
 
-import java.io.IOException;
-import java.sql.*;
-import java.util.Hashtable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import database.DataBaseService;
+        import java.io.IOException;
+        import java.sql.*;
+        import java.util.Hashtable;
+        import java.util.ArrayList;
+        import java.util.List;
+        import java.util.Scanner;
+        import database.DataBaseService;
 
 public class AuctionService {
     private List<Cumparator> cumparatori = new ArrayList<>();
@@ -71,6 +71,40 @@ public class AuctionService {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void ModificareBalanta(int ID, int balanta) {
+        for (Vanzator vanzator : vanzatori) {
+            if (vanzator.getID() == ID) {
+                vanzator.setBalanta(balanta);
+            }
+        }
+        for (Cumparator cumparator : cumparatori) {
+            if (cumparator.getID() == ID) {
+                cumparator.setBalanta(balanta);
+            }
+        }
+        try {
+            auditService.logAction("ModificareBalanta");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void UpdatePersoane () {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/pao_252", "root", "admin")) {
+            for (Vanzator vanzator : vanzatori) {
+                Statement statement = connection.createStatement();
+                statement.execute("UPDATE vanzator SET nume = '" + vanzator.getNume() + "', varsta = " + vanzator.getVarsta() + ", balanta = " + vanzator.getBalanta() + " WHERE ID = " + vanzator.getID());
+            }
+            for (Cumparator cumparator : cumparatori) {
+                Statement statement = connection.createStatement();
+                statement.execute("UPDATE cumparator SET nume = '" + cumparator.getNume() + "', varsta = " + cumparator.getVarsta() + ", balanta = " + cumparator.getBalanta() + " WHERE ID = " + cumparator.getID());
+            }
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
@@ -270,6 +304,11 @@ public class AuctionService {
     public void AcceptareOferta(int ProdusID, int CumparatorID) {
         int VanzatorID,  suma;
         String nume = "";
+        try {
+            auditService.logAction("AcceptareOferta");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         for (Oferta oferta : oferte) {
             if (oferta.getObiectID()== ProdusID && oferta.getCumparatorID() == CumparatorID) {
                 VanzatorID = oferta.getVanzatorID();
@@ -399,7 +438,7 @@ public class AuctionService {
             }
         }
     }
-    
+
     public void UpdatebestOffert(Oferta oferta) {
         if (bestOffert.containsKey(oferta.getObiectID())) {
             if (bestOffert.get(oferta.getObiectID()).getPret() < oferta.getPret()) {
@@ -423,7 +462,8 @@ public class AuctionService {
         System.out.println("2. Stergere");
         System.out.println("3. Modificare");
         System.out.println("4. Afisare");
-        System.out.println("5. Exit");
+        System.out.println("5. Acceptare oferta");
+        System.out.println("6. Exit");
 
         Scanner scanner = new Scanner(System.in);
         int comanda = scanner.nextInt();
@@ -443,6 +483,16 @@ public class AuctionService {
                 Afisare();
                 break;
             case 5:
+                System.out.println("Introduceti ID-ul obiectului pe care doriti sa o acceptati: ");
+                int ID = scanner.nextInt();
+                scanner.nextLine();
+                System.out.println("Introduceti ID-ul cumparatorului: ");
+                int CumparatorID = scanner.nextInt();
+                scanner.nextLine();
+                AcceptareOferta(ID, CumparatorID);
+                break;
+            case 6:
+                UpdatePersoane();
                 System.exit(0);
                 break;
             default:
@@ -457,7 +507,8 @@ public class AuctionService {
         System.out.println("3. Afisare colectie");
         System.out.println("4. Afisare cea mai buna oferta");
         System.out.println("5. Afisare avere");
-
+        System.out.println("6. Afisare vanzatori");
+        System.out.println("7. Afisare cumparatori");
         Scanner scanner = new Scanner(System.in);
         int comanda = scanner.nextInt();
         scanner.nextLine();
@@ -486,6 +537,12 @@ public class AuctionService {
                 int ID3 = scanner.nextInt();
                 scanner.nextLine();
                 AfisareAvere(ID3);
+                break;
+            case 6:
+                AfisareVanzatori();
+                break;
+            case 7:
+                AfisareCumparatori();
                 break;
             default:
                 System.out.println("Comanda invalida");
@@ -573,7 +630,7 @@ public class AuctionService {
 
     public void Modificare() {
         System.out.println("1. Modificare oferta");
-
+        System.out.println("2. Modificare balanta");
         Scanner scanner = new Scanner(System.in);
         int comanda = scanner.nextInt();
         scanner.nextLine();
@@ -590,6 +647,15 @@ public class AuctionService {
                 int pret = scanner.nextInt();
                 scanner.nextLine();
                 ModificareOferta(ID, ID2, pret);
+                break;
+            case 2:
+                System.out.println("Introduceti ID-ul utilizatorului: ");
+                int ID3 = scanner.nextInt();
+                scanner.nextLine();
+                System.out.println("Introduceti noul balanta: ");
+                int balanta = scanner.nextInt();
+                scanner.nextLine();
+                ModificareBalanta(ID3, balanta);
                 break;
         }
     }
